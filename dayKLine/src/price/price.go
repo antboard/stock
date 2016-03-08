@@ -87,28 +87,62 @@ func (p *Price) Save(idx int) {
 }
 
 //CutPrice 切价格--用于测试图是否正确.
-func CutPrice(m *image.Image) {
+
+func cutPrice(m *image.Image) {
+	back := color.RGBA{0, 0, 0, 0}
 	p := make([]*Price, 10, 10)
-	offy := []int{0, 17, 35, 53, 70, 88, 106, 123, 141, 159}
-	for i := 0; i < 10; i++ {
+	// offy := []int{0, 17, 35, 53, 70, 88, 106, 123, 141, 159}
+	last := 15
+
+	for i := 0; i < 45; i++ {
+		fmt.Println((*m).At(i, 15))
+	}
+	for i := 0; i < 8; i++ {
 		p[i] = CreatePrice()
-		p[i].Make(m, 45, 15+offy[i])
+	All:
+		for ; last < 180; last++ {
+			for l := 0; l < 45; l++ {
+				clast := (*m).At(l, last)
+				if clast != back {
+					fmt.Println(clast, "price ", i, " = ", last)
+					break All
+				}
+			}
+		}
+		p[i].Make(m, 45, last)
+		last += 8
 		p[i].Save(i)
 	}
 }
 
 // GetPrices 计算10个股价
 func GetPrices(m *image.Image) (ret []float32) {
-	ret = make([]float32, 10, 10)
+	back := color.RGBA{0, 0, 0, 0}
 	p := make([]*Price, 10, 10)
-	offy := []int{0, 17, 35, 53, 70, 88, 106, 123, 141, 159}
-	for i := 0; i < 10; i++ {
-		p[i] = CreatePrice()
-		p[i].Make(m, 45, 15+offy[i])
-		p[i].Cover()
+	// offy := []int{0, 17, 35, 53, 70, 88, 106, 123, 141, 159}
+	last := 15
 
+	// for i := 0; i < 45; i++ {
+	// 	fmt.Println((*m).At(i, 15))
+	// }
+	for i := 0; i < 8; i++ {
+		p[i] = CreatePrice()
+	All:
+		for ; last < 180; last++ {
+			for l := 0; l < 45; l++ {
+				clast := (*m).At(l, last)
+				if clast != back {
+					// fmt.Println(clast, "price ", i, " = ", last)
+					break All
+				}
+			}
+		}
+		p[i].Make(m, 45, last)
+		last += 8
+		p[i].Save(i)
+		p[i].Cover()
 	}
-	for i := 9; i >= 0; i-- {
+	for i := 7; i >= 0; i-- {
 		fmt.Print(p[i].V, ", ")
 	}
 	fmt.Println("")
