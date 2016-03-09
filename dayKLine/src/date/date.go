@@ -78,7 +78,7 @@ Find:
 	}
 	// 如果是1的话,需要前移一像素
 	if last >= 1 {
-		bOne := charAndNum.GetChar(p.img, last-1, 0, false) == '1'
+		bOne := charAndNum.GetCharA(p.img, last-1, 0, false) == '1'
 		if bOne == true {
 			last--
 		}

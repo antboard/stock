@@ -264,3 +264,63 @@ func GetChar(m *image.Paletted, x, y int, b bool) (n byte) {
 	// fmt.Println("bit", string(n))
 	return n
 }
+
+// GetCharA 从 x,y 位置开始计算一个字符
+func GetCharA(m *image.Paletted, x, y int, b bool) (n byte) {
+	// 计算字模
+	// 背景色
+	num := [][]int8{
+		{1, 1, 1, 1, 1}, // 1
+		{1, 1, 1, 1, 1}, // 2
+		{1, 1, 1, 1, 1}, // 3
+		{1, 1, 1, 1, 1}, // 4
+		{1, 1, 1, 1, 1}, // 5
+		{1, 1, 1, 1, 1}, // 6
+		{1, 1, 1, 1, 1}, // 7
+	}
+	back := color.RGBA{0xff, 0xff, 0xff, 0xff}
+	for i := 0; i < 7; i++ {
+		for j := 0; j < 5; j++ {
+			if m.At(j+x, i+y) != back {
+				num[i][j] = 0
+			}
+		}
+	}
+
+	n = '0'
+	if CMPA(num, NUM0) {
+		n = '0'
+	} else if CMPA(num, NUM2) {
+		n = '2'
+	} else if CMPA(num, NUM1) {
+		n = '1'
+	} else if CMPA(num, NUM4) {
+		n = '4'
+	} else if CMPA(num, NUM5) {
+		n = '5'
+	} else if CMPA(num, NUM6) {
+		n = '6'
+	} else if CMPA(num, NUM7) {
+		n = '7'
+	} else if CMPA(num, NUM8) {
+		n = '8'
+	} else if CMPA(num, NUM9) {
+		n = '9'
+	} else if CMPA(num, NUM3) {
+		n = '3'
+	} else if CMPA(num, NUMdot) {
+		n = '.'
+	} else if CMPA(num, CHARdiv) {
+		n = '-'
+	} else if CMPA(num, NUM) {
+		n = ' '
+	} else {
+		if b {
+			n = 'p'
+			fmt.Println("err: x = ", x, "y = ", y)
+			Dump(num)
+		}
+	}
+	// fmt.Println("bit", string(n))
+	return n
+}
