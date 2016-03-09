@@ -44,7 +44,7 @@ func (p *Price) Make(m *image.Image, right, top int) {
 }
 
 // Cover ...
-func (p *Price) Cover() {
+func (p *Price) Cover() int {
 	n := byte(0)
 	p.V = float32(0.0)
 	b := float32(1.0) // 倍率
@@ -52,8 +52,12 @@ func (p *Price) Cover() {
 	p.V += float32(n-'0') * b
 	b = b * 10
 	n = charAndNum.GetChar(p.img, 39, 0, true)
-	if n == ' ' {
-		return
+	if n == 'p' {
+		p.V = 0.0
+		fmt.Println("...err: Cover err...")
+		return -1
+	} else if n == ' ' {
+		return 0
 	} else if n == '.' {
 		p.V = p.V * 0.1
 		b = 1
@@ -63,8 +67,12 @@ func (p *Price) Cover() {
 	}
 
 	n = charAndNum.GetChar(p.img, 33, 0, true)
-	if n == ' ' {
-		return
+	if n == 'p' {
+		p.V = 0.0
+		fmt.Println("...err: Cover err...")
+		return -1
+	} else if n == ' ' {
+		return 0
 	} else if n == '.' {
 		p.V = p.V * 0.01
 		b = 1
@@ -73,20 +81,29 @@ func (p *Price) Cover() {
 		b = b * 10
 	}
 	n = charAndNum.GetChar(p.img, 27, 0, true)
-	if n == ' ' {
-		return
+	if n == 'p' {
+		p.V = 0.0
+		fmt.Println("...err: Cover err...")
+		return -1
+	} else if n == ' ' {
+		return 0
 	}
 	p.V += float32(n-'0') * b
 	b = b * 10
 
 	n = charAndNum.GetChar(p.img, 21, 0, true)
-	if n == ' ' {
-		return
+	if n == 'p' {
+		p.V = 0.0
+		fmt.Println("...err: Cover err...")
+		return -1
+	} else if n == ' ' {
+		return 0
 	}
 	p.V += float32(n-'0') * b
 	b = b * 10
 	// fmt.Print(p.V, " ")
 	// charAndNum.GetChar(p.img, 20, 0, true)
+	return 1
 }
 
 // Save ...
@@ -155,9 +172,9 @@ func GetPrices(m *image.Image) (ret []float32) {
 		p[i].Save(i)
 		p[i].Cover()
 	}
+	ret = make([]float32, len(p), len(p))
 	for i = i - 1; i >= 0; i-- {
-		fmt.Print(p[i].V, ", ")
+		ret[i] = p[i].V
 	}
-	fmt.Println("")
 	return
 }

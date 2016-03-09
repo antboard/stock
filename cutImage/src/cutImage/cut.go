@@ -12,7 +12,7 @@ import (
 func main() {
 	fmt.Println("股票...")
 	// 打开 gif 文件
-	f, e := os.Open("/Users/jiangyichun/Downloads/code/stock/download/bin/600052.gif")
+	f, e := os.Open("/Users/jiangyichun/Downloads/code/stock/download/bin/600120.gif")
 	if e != nil {
 		fmt.Println("open err:", e)
 	}

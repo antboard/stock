@@ -195,6 +195,9 @@ func GetNum(m *image.Paletted, x, y int) int {
 	if c == ' ' {
 		return 0
 	}
+	if c == 'p' {
+		return -1
+	}
 	n := c - '0'
 	if n > 9 || n < 0 {
 		fmt.Println("...GetNum error...", string(c), n)
@@ -227,10 +230,10 @@ func GetChar(m *image.Paletted, x, y int, b bool) (n byte) {
 	n = '0'
 	if CMP(num, NUM0) {
 		n = '0'
-	} else if CMP(num, NUM1) {
-		n = '1'
 	} else if CMP(num, NUM2) {
 		n = '2'
+	} else if CMP(num, NUM1) {
+		n = '1'
 	} else if CMP(num, NUM4) {
 		n = '4'
 	} else if CMP(num, NUM5) {
@@ -253,10 +256,11 @@ func GetChar(m *image.Paletted, x, y int, b bool) (n byte) {
 		n = ' '
 	} else {
 		if b {
+			n = 'p'
 			fmt.Println("err: x = ", x, "y = ", y)
 			Dump(num)
 		}
 	}
-	// fmt.Println("bit", n)
+	// fmt.Println("bit", string(n))
 	return n
 }

@@ -13,6 +13,7 @@ import (
 // Hands 价格
 type Hands struct {
 	img *image.Paletted
+	v   int
 }
 
 // CreateHands ...
@@ -58,7 +59,7 @@ func (p *Hands) cover() {
 	n += charAndNum.GetNum(p.img, 33, 0) * 100
 	n += charAndNum.GetNum(p.img, 27, 0) * 100
 	n += charAndNum.GetNum(p.img, 21, 0) * 1000
-	fmt.Print(n, ", ")
+	p.v = n
 }
 
 func cutHands(m *image.Image) {
@@ -91,7 +92,7 @@ func cutHands(m *image.Image) {
 }
 
 // GetHands ...
-func GetHands(m *image.Image) {
+func GetHands(m *image.Image) (ret []int) {
 	p := make([]*Hands, 0, 4)
 	back := color.RGBA{0, 0, 0, 0}
 
@@ -114,5 +115,9 @@ func GetHands(m *image.Image) {
 		// p[i].Save(i)
 		p[i].cover()
 	}
-	fmt.Println("")
+	ret = make([]int, len(p), len(p))
+	for i := 0; i < len(p); i++ {
+		ret[i] = p[i].v
+	}
+	return
 }

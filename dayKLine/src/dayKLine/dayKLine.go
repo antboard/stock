@@ -9,6 +9,7 @@ import (
 	"os"
 	"price"
 	"runtime"
+	"time"
 )
 
 type aStock struct {
@@ -18,27 +19,30 @@ type stocks struct {
 	St []*aStock
 }
 
-// var wait chan int
-// var files chan int
+var wait chan int
+var files chan int
 
 func deal(strFile string) {
 	// 打开 gif 文件
 	f, e := os.Open(strFile) // "/Users/jiangyichun/Downloads/code/stock/download/bin/sh601006.gif"
 	if e != nil {
 		fmt.Println("open err:", e)
-		// files <- 1
-		// wait <- 1
+		files <- 1
+		wait <- 1
 		return
 	}
-	defer f.Close()
+	// defer f.Close()
 	//
 	m, e := gif.Decode(f)
 	if e != nil {
 		fmt.Println("...Decode err:", e)
-		// files <- 1
-		// wait <- 1
+		files <- 1
+		wait <- 1
+		f.Close()
 		return
 	}
+
+	f.Close()
 
 	bounds := m.Bounds()
 	if bounds.Max.X != 545 ||
@@ -49,23 +53,33 @@ func deal(strFile string) {
 	// 计算股票代码
 	// 横坐标50-100处
 	// 纵坐标7-15处
-	price.GetPrices(&m)
+	priceNum := price.GetPrices(&m)
 	// price.GetPricesData(&m)
-	hands.GetHands(&m)
+	handsNum := hands.GetHands(&m)
 	// hands.GetData(&m)
-	date.GetDate(&m)
+	dateNum := date.GetDate(&m)
 
-	// files <- 1
-	// wait <- 1
+	s := fmt.Sprintln(strFile)
+	for i := 0; i < len(priceNum); i++ {
+		if priceNum[i] < 0.01 {
+			s += "err: price err\n"
+		}
+	}
+	s += fmt.Sprintln(priceNum)
+	s += fmt.Sprintln(handsNum)
+	s += fmt.Sprintln(dateNum)
+	fmt.Println(s)
+	files <- 1
+	wait <- 1
 
 }
 
-func main() {
-	// wait = make(chan int, 10)
-	// files = make(chan int, 100)
-	// for i := 0; i < 100; i++ {
-	// 	files <- i
-	// }
+func oldmain() {
+	wait = make(chan int, 10)
+	files = make(chan int, 100)
+	for i := 0; i < 100; i++ {
+		files <- i
+	}
 	MULTICORE := runtime.NumCPU() //number of core
 
 	runtime.GOMAXPROCS(MULTICORE) //running in multicore
@@ -85,8 +99,8 @@ func main() {
 	st := &stocks{}
 	json.Unmarshal(data, st)
 	fmt.Println("json len: ", len(st.St))
-	for i := 0; i < 100; i++ { //len(st.St)
-		// <-files
+	for i := 0; i < len(st.St); i++ { //len(st.St)
+		<-files
 		strFile := "/Users/jiangyichun/Downloads/code/stock/download/bin/"
 		// if st.St[i].Code[0] == '6' {
 		// 	strFile += "sh"
@@ -94,12 +108,19 @@ func main() {
 		// 	strFile += "sz"
 		// }
 		strFile = strFile + st.St[i].Code + ".gif"
-		fmt.Println(strFile)
-		// go deal(strFile)
-		deal(strFile)
+		// fmt.Println(strFile)
+		go deal(strFile)
+		// deal(strFile)
 	}
-	// for i := 0; i < len(st.St); i++ {
-	// 	<-wait
-	// 	fmt.Println("...", i, "end")
-	// }
+	for i := 0; i < len(st.St); i++ {
+		<-wait
+		// fmt.Println("...", i, "end")
+	}
+}
+
+func main() {
+	wait = make(chan int, 10)
+	files = make(chan int, 100)
+	deal("/Users/jiangyichun/Downloads/code/stock/download/bin/600156.gif")
+	time.Sleep(time.Second * 3)
 }

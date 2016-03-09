@@ -13,6 +13,7 @@ import (
 // Date 价格
 type Date struct {
 	img *image.Paletted
+	s   string
 }
 
 // CreateDate ...
@@ -69,21 +70,18 @@ func (p *Date) cover() {
 Find:
 	for ; last < 59; last++ {
 		for j := 0; j < 7; j++ {
+
 			if p.img.At(last, j) != back {
 				break Find
 			}
 		}
 	}
 	// 如果是1的话,需要前移一像素
-	bOne := true
-	for j := 0; j < 7; j++ {
-		if p.img.At(last+1, j) == back {
-			bOne = false
-			break
+	if last >= 1 {
+		bOne := charAndNum.GetChar(p.img, last-1, 0, false) == '1'
+		if bOne == true {
+			last--
 		}
-	}
-	if bOne == true {
-		last--
 	}
 
 	// 解析年月日
@@ -96,9 +94,13 @@ Find:
 		last += 6
 		y3 := charAndNum.GetChar(p.img, last, 0, true)
 		last += 6
-		m2 := charAndNum.GetChar(p.img, 24, 0, true)
+		m2 := charAndNum.GetChar(p.img, last, 0, true)
 		last += 6
-		fmt.Printf("%c%c%c%c%c", y0, y1, y2, y3, m2)
+		p.s = fmt.Sprintf("%c%c%c%c%c", y0, y1, y2, y3, m2)
+		switch byte('p') {
+		case y0, y1, y2, y3, m2:
+			p.s = "err"
+		}
 	}
 	m0 := charAndNum.GetChar(p.img, last, 0, true)
 	last += 6
@@ -112,8 +114,12 @@ Find:
 	last += 6
 	d1 := charAndNum.GetChar(p.img, last, 0, true)
 	last += 6
-
-	fmt.Printf("%c%c%c%c%c\t", m0, m1, d2, d0, d1)
+	// fmt.Printf("%c%c%c%c%c\t", m0, m1, d2, d0, d1)
+	p.s += fmt.Sprintf("%c%c%c%c%c\t", m0, m1, d2, d0, d1)
+	switch byte('p') {
+	case m0, m1, d2, d0, d1:
+		p.s = "err"
+	}
 
 }
 
@@ -155,7 +161,7 @@ func cutDate(m *image.Image) {
 }
 
 // GetDate ...
-func GetDate(m *image.Image) {
+func GetDate(m *image.Image) (ret []string) {
 	p := make([]*Date, 0, 16)
 	back := color.RGBA{0xb4, 0xb4, 0xb4, 0xff}
 
@@ -181,10 +187,14 @@ func GetDate(m *image.Image) {
 		p = append(p, CreateDate())
 		p[i].MakeDate(m, left-30, 183)
 		left++
-		// p[i].Save(i)
+		p[i].Save(i)
 		p[i].cover()
 	}
-	fmt.Println("")
+	ret = make([]string, len(p), len(p))
+	for i := 0; i < len(p); i++ {
+		ret[i] = p[i].s
+	}
+	return
 }
 
 // GetDate ...
