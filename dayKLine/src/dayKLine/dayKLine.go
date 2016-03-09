@@ -60,7 +60,7 @@ func deal(strFile string) {
 	dateNum := date.GetDate(&m)
 
 	s := fmt.Sprintln(strFile)
-	for i := 0; i < len(priceNum); i++ {
+	for i := 0; i < len(priceNum)-1; i++ {
 		if priceNum[i] < 0.01 {
 			s += "err: price err\n"
 		}
@@ -74,7 +74,7 @@ func deal(strFile string) {
 
 }
 
-func oldmain() {
+func main() {
 	wait = make(chan int, 10)
 	files = make(chan int, 100)
 	for i := 0; i < 100; i++ {
@@ -118,9 +118,9 @@ func oldmain() {
 	}
 }
 
-func main() {
+func oldmain() {
 	wait = make(chan int, 10)
 	files = make(chan int, 100)
-	deal("/Users/jiangyichun/Downloads/code/stock/download/bin/600156.gif")
+	deal("/Users/jiangyichun/Downloads/code/stock/download/bin/002558.gif")
 	time.Sleep(time.Second * 3)
 }
