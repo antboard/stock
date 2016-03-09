@@ -187,7 +187,7 @@ func GetDate(m *image.Image) (ret []string) {
 		p = append(p, CreateDate())
 		p[i].MakeDate(m, left-30, 183)
 		left++
-		p[i].Save(i)
+		// p[i].Save(i)
 		p[i].cover()
 	}
 	ret = make([]string, len(p), len(p))

@@ -169,7 +169,7 @@ func GetPrices(m *image.Image) (ret []float32) {
 		p = append(p, CreatePrice())
 		p[i].Make(m, 45, last)
 		last += 8
-		p[i].Save(i)
+		// p[i].Save(i)
 		p[i].Cover()
 	}
 	ret = make([]float32, len(p), len(p))
