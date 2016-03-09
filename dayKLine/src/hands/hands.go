@@ -62,22 +62,55 @@ func (p *Hands) cover() {
 }
 
 func cutHands(m *image.Image) {
-	p := make([]*Hands, 4, 4)
-	offy := []int{0, 21, 42, 63}
-	for i := 0; i < 4; i++ {
-		p[i] = CreateHands()
-		p[i].Make(m, 45, 197+offy[i])
+	p := make([]*Hands, 0, 8)
+	back := color.RGBA{0, 0, 0, 0}
+	// offy := []int{0, 21, 42, 63}
+	last := 197
+	// for i := 0; i < 45; i++ {
+	// 	fmt.Println((*m).At(i, last))
+	// }
+
+	for i := 0; ; i++ {
+	Find:
+		for ; last < 270; last++ {
+			for k := 0; k < 45; k++ {
+				if (*m).At(k, last) != back {
+					break Find
+				}
+			}
+		}
+		if last >= 270 {
+			break
+		}
+		p = append(p, CreateHands())
+		fmt.Println("...", last)
+		p[i].Make(m, 45, last)
+		last += 8
 		p[i].Save(i)
 	}
 }
 
 // GetHands ...
 func GetHands(m *image.Image) {
-	p := make([]*Hands, 4, 4)
-	offy := []int{0, 21, 42, 63}
-	for i := 0; i < 4; i++ {
-		p[i] = CreateHands()
-		p[i].Make(m, 45, 197+offy[i])
+	p := make([]*Hands, 0, 4)
+	back := color.RGBA{0, 0, 0, 0}
+
+	last := 197
+	for i := 0; ; i++ {
+	Find:
+		for ; last < 270; last++ {
+			for k := 0; k < 45; k++ {
+				if (*m).At(k, last) != back {
+					break Find
+				}
+			}
+		}
+		if last >= 270 {
+			break
+		}
+		p = append(p, CreateHands())
+		p[i].Make(m, 45, last)
+		last += 8
 		// p[i].Save(i)
 		p[i].cover()
 	}

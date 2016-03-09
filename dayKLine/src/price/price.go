@@ -45,38 +45,48 @@ func (p *Price) Make(m *image.Image, right, top int) {
 
 // Cover ...
 func (p *Price) Cover() {
-	n := 0
+	n := byte(0)
 	p.V = float32(0.0)
 	b := float32(1.0) // 倍率
-	n = charAndNum.GetNum(p.img, 45, 0)
-	p.V += float32(n) * b
+	n = charAndNum.GetChar(p.img, 45, 0, true)
+	p.V += float32(n-'0') * b
 	b = b * 10
-	n = charAndNum.GetNum(p.img, 39, 0)
-	if n == 0xa {
+	n = charAndNum.GetChar(p.img, 39, 0, true)
+	if n == ' ' {
+		return
+	} else if n == '.' {
 		p.V = p.V * 0.1
 		b = 1
 	} else {
-		p.V += float32(n) * b
+		p.V += float32(n-'0') * b
 		b = b * 10
 	}
 
-	n = charAndNum.GetNum(p.img, 33, 0)
-	if n == 0xa {
+	n = charAndNum.GetChar(p.img, 33, 0, true)
+	if n == ' ' {
+		return
+	} else if n == '.' {
 		p.V = p.V * 0.01
 		b = 1
 	} else {
-		p.V += float32(n) * b
+		p.V += float32(n-'0') * b
 		b = b * 10
 	}
-	n = charAndNum.GetNum(p.img, 27, 0)
-	p.V += float32(n) * b
+	n = charAndNum.GetChar(p.img, 27, 0, true)
+	if n == ' ' {
+		return
+	}
+	p.V += float32(n-'0') * b
 	b = b * 10
 
-	n = charAndNum.GetNum(p.img, 21, 0)
-	p.V += float32(n) * b
+	n = charAndNum.GetChar(p.img, 21, 0, true)
+	if n == ' ' {
+		return
+	}
+	p.V += float32(n-'0') * b
 	b = b * 10
 	// fmt.Print(p.V, " ")
-	// charAndNum.GetNum(p.img, 20, 0)
+	// charAndNum.GetChar(p.img, 20, 0, true)
 }
 
 // Save ...
@@ -97,7 +107,7 @@ func cutPrice(m *image.Image) {
 	for i := 0; i < 45; i++ {
 		fmt.Println((*m).At(i, 15))
 	}
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 10; i++ {
 		p[i] = CreatePrice()
 	All:
 		for ; last < 180; last++ {
@@ -109,6 +119,9 @@ func cutPrice(m *image.Image) {
 				}
 			}
 		}
+		if last > 180 {
+			break
+		}
 		p[i].Make(m, 45, last)
 		last += 8
 		p[i].Save(i)
@@ -118,31 +131,31 @@ func cutPrice(m *image.Image) {
 // GetPrices 计算10个股价
 func GetPrices(m *image.Image) (ret []float32) {
 	back := color.RGBA{0, 0, 0, 0}
-	p := make([]*Price, 10, 10)
+	p := make([]*Price, 0, 10)
 	// offy := []int{0, 17, 35, 53, 70, 88, 106, 123, 141, 159}
 	last := 15
+	i := 0
 
-	// for i := 0; i < 45; i++ {
-	// 	fmt.Println((*m).At(i, 15))
-	// }
-	for i := 0; i < 8; i++ {
-		p[i] = CreatePrice()
-	All:
+	for i = 0; ; i++ {
+	Find:
 		for ; last < 180; last++ {
 			for l := 0; l < 45; l++ {
 				clast := (*m).At(l, last)
 				if clast != back {
-					// fmt.Println(clast, "price ", i, " = ", last)
-					break All
+					break Find
 				}
 			}
 		}
+		if last > 180 {
+			break
+		}
+		p = append(p, CreatePrice())
 		p[i].Make(m, 45, last)
 		last += 8
 		p[i].Save(i)
 		p[i].Cover()
 	}
-	for i := 7; i >= 0; i-- {
+	for i = i - 1; i >= 0; i-- {
 		fmt.Print(p[i].V, ", ")
 	}
 	fmt.Println("")

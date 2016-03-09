@@ -12,7 +12,7 @@ import (
 func main() {
 	fmt.Println("股票...")
 	// 打开 gif 文件
-	f, e := os.Open("/Users/jiangyichun/Downloads/code/stock/download/bin/600000.gif")
+	f, e := os.Open("/Users/jiangyichun/Downloads/code/stock/download/bin/600052.gif")
 	if e != nil {
 		fmt.Println("open err:", e)
 	}
@@ -26,26 +26,26 @@ func main() {
 	bounds := m.Bounds()
 	if bounds.Max.X != 545 ||
 		bounds.Max.Y != 300 {
-		fmt.Println("...gif size is ", bounds, " NOT 545*300")
+		fmt.Println("err:...gif size is ", bounds, " NOT 545*300")
 	}
 
 	// 计算股票代码
 	// 横坐标50-100处, 50pix
 	// 纵坐标7-15处 8pix
 	// 颜色000
-	cutCode(&m)
+	// cutCode(&m)
 	// 股票价格,从y15开始切10个价格
 	// 字加空行共18像素
 	// 字高7像素,行距10像素
-	cutPrice(&m)
+	// cutPrice(&m)
 	// 价格数据
-	cutPriceData(&m)
+	// cutPriceData(&m)
 	//手数
-	cutHands(&m)
+	// cutHands(&m)
 	// 日期
 	cutDate(&m)
 	// 手数数据
-	cutHandsData(&m)
+	// cutHandsData(&m)
 }
 
 func cutCode(m *image.Image) {

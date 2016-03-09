@@ -57,7 +57,7 @@ func cutPrice(m *image.Image) {
 	for i := 0; i < 45; i++ {
 		fmt.Println((*m).At(i, 15))
 	}
-	for i := 0; i < 8; i++ {
+	for i := 0; i < 10; i++ {
 		p[i] = CreatePrice()
 	All:
 		for ; last < 180; last++ {
