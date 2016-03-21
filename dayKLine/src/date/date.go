@@ -10,10 +10,11 @@ import (
 	"os"
 )
 
-// Date 价格
+// Date 日期
 type Date struct {
-	img *image.Paletted
-	s   string
+	img    *image.Paletted
+	s      string // 转换后的字符串
+	offset int    // 字符串所标记的位置
 }
 
 // CreateDate ...
@@ -21,7 +22,7 @@ func CreateDate() *Date {
 	return &Date{img: image.NewPaletted(image.Rect(0, 0, 59, 7), palette.Plan9)}
 }
 
-// MakeDate 价格的右左上角坐标
+// MakeDate 价格的右上角坐标
 func (p *Date) MakeDate(m *image.Image, left, top int) int {
 	c := color.RGBA{0x0, 0x86, 0xd2, 0xff}
 	back := color.RGBA{0xff, 0xff, 0xff, 0}
@@ -185,6 +186,7 @@ func GetDate(m *image.Image) (ret []string) {
 		}
 
 		p = append(p, CreateDate())
+		p[i].offset = left
 		p[i].MakeDate(m, left-30, 183)
 		left++
 		// p[i].Save(i)
@@ -196,44 +198,3 @@ func GetDate(m *image.Image) (ret []string) {
 	}
 	return
 }
-
-// GetDate ...
-// func GetDate(m *image.Image) {
-// 	p := make([]*Date, 0, 16)
-// 	back := color.RGBA{0, 0, 0, 0}
-
-// 	// offx := []int{0, 45, 105, 165, 234, 279, 339, 390}
-// 	last := 40
-// 	for i := 0; ; i++ {
-// 	Find:
-// 		for ; last < 500; last++ {
-// 			for j := 0; j < 7; j++ {
-// 				if (*m).At(last, j+183) != back {
-// 					// fmt.Println("...", last)
-// 					break Find
-// 				}
-// 			}
-// 		}
-// 		// 如果是1的话,需要前移一像素
-// 		bOne := true
-// 		for j := 0; j < 7; j++ {
-// 			if (*m).At(last+1, j+183) == back {
-// 				bOne = false
-// 				break
-// 			}
-// 		}
-// 		if bOne == true {
-// 			last--
-// 		}
-
-// 		if last > 500 {
-// 			break
-// 		}
-
-// 		p = append(p, CreateDate())
-// 		last += p[i].MakeDate(m, last, 183)
-// 		p[i].Save(i)
-// 		p[i].cover()
-// 	}
-// 	fmt.Println("")
-// }
